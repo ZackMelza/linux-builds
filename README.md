@@ -23,8 +23,9 @@ components that can be combined according to the target system.
 
 The repository audit and foundation are complete. Existing Linux
 configurations are now being imported one component at a time.
-The i3 and JaKooLit source snapshots are imported, but live testing remains
-outstanding. JaKooLit source-history preservation is also pending.
+The i3 and JaKooLit configurations are imported, but live testing remains
+outstanding. JaKooLit's original Git history has been preserved in the
+migration branch.
 
 ## Architecture
 
@@ -59,7 +60,7 @@ design principles and development approach.
 | [Omarchy](omarchy/README.md) | Personal Omarchy configurations, overrides and Symbiote theme |
 | [Zsh](zsh/) | Personal Zsh and Starship configurations |
 | [i3](configs/window-managers/i3/README.md) | Imported independent X11 configuration; live verification pending |
-| [JaKooLit preset](configs/presets/jakoolit/README.md) | Imported preset snapshot; verification and history work pending |
+| [JaKooLit preset](configs/presets/jakoolit/README.md) | Imported preset and Git history; static and live verification pending |
 
 ## Planned Components
 

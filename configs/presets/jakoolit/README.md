@@ -1,6 +1,6 @@
 # JaKooLit-based Hyprland preset
 
-**Status:** Imported snapshot; live deployment and history preservation pending.
+**Status:** Imported preset with original Git ancestry preserved; static and live verification pending.
 
 This is the existing, customized JaKooLit **preset**, not the future independent Linux-builds Hyprland configuration. Source: [ZackMelza/hyprland](https://github.com/ZackMelza/hyprland) at [`001438a3807b0ed84feab4d0b4730504713e4800`](https://github.com/ZackMelza/hyprland/commit/001438a3807b0ed84feab4d0b4730504713e4800).
 
@@ -8,7 +8,7 @@ This is the existing, customized JaKooLit **preset**, not the future independent
 
 The upstream [JaKooLit/Hyprland-Dots](https://github.com/JaKooLit/Hyprland-Dots) project provides the GNU GPLv3 license; its full text is included as [LICENSE.md](LICENSE.md). This does **not** declare a blanket license for Linux-builds. The owner's original repository has no standalone license file; review individual inherited third-party scripts/notices before broader redistribution.
 
-**History gate:** The source commit is pinned and the source repository remains intact, but this GitHub snapshot import does **not** import the historical source Git graph. Preserve or import its meaningful history separately before closing that requirement.
+**Git history preserved:** The original source commit graph is now reachable from the Linux-builds migration branch through the two-parent history merge [`5ea2d8d`](https://github.com/ZackMelza/linux-builds/commit/5ea2d8d9ad76ae722c3bc9612f464bd933065b63). Its second parent is the source tip [`001438a`](https://github.com/ZackMelza/hyprland/commit/001438a3807b0ed84feab4d0b4730504713e4800). The merge used Git's `ours` strategy, so the already-imported file tree was unchanged and historical file paths remain in their original layout; past commits were **not** rewritten under `configs/presets/jakoolit/`. The original repository remains available and unarchived.
 
 ## Structure and configuration
 
