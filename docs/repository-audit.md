@@ -1,6 +1,6 @@
 # Repository audit and Phase 02 migration plan
 
-**Status:** Phase 00 audit recorded; Phase 02 plan approved, migration not started
+**Status:** Historical Phase 00 audit and initial Phase 02 plan; see the post-audit layout addendum below.
 
 **Date:** 2026-09-30
 
@@ -94,3 +94,28 @@ has been verified and the owner has separately approved that action.
 The existing Omarchy and Zsh files remain in place pending their Phase 02
 reorganization. Their moves and every configuration migration task in the
 [roadmap](../ROADMAP.md) remain unstarted.
+
+## Post-audit layout amendment (2026-10-09)
+
+The owner subsequently approved a shorter, role-based layout for Linux-builds.
+The proposed paths in the original audit table above are retained as a
+**historical record**, not as the current destinations. The adopted paths are:
+
+| Component | Current destination |
+|---|---|
+| Independent i3 | `wm/i3/` |
+| Independent DWM (planned migration) | `wm/dwm/` |
+| JaKooLit preset | `presets/jakoolit/` |
+| Omarchy preset | `presets/omarchy/` |
+| Zsh config | `shared/zsh/` |
+| Starship config | `shared/starship/` |
+| Future Quickshell | `shell/quickshell/` |
+
+The JaKooLit wrapper directory was flattened while preserving its shared,
+laptop, desktop and profile subtrees and original Git commit ancestry.
+The approved configuration-only redesign is a **later planning requirement**
+([N-001](../needs/N-001-lean-config-only-desktops.md)); the migration itself
+must not discard working legacy scripts or claim live compatibility.
+
+See [architecture.md](architecture.md) for the current folder organization
+and the Phase 02 reorganization report for validation limits.

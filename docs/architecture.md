@@ -1,8 +1,8 @@
 
 # Linux-builds — Architecture
 
-**Status:** Proposed
-**Version:** 0.1
+**Status:** Directory layout approved; runtime architecture remains proposed
+**Version:** 0.2
 
 ## 1. Vision
 
@@ -42,10 +42,10 @@ Examples:
 - Keybinding conventions.
 - Common application preferences.
 
-The existing `zsh/` files are personal configurations. `.zshrc`
-contains Omarchy-specific setup and distribution-specific paths;
-`starship.toml` includes a machine-specific home path. Their portability
-has not been verified. Extracting a reusable Zsh component is future work.
+The migrated `shared/zsh/.zshrc` and `shared/starship/starship.toml` remain
+personal configurations, not confirmed portable defaults. Zsh still uses
+Omarchy- and distribution-specific paths; Starship includes a hard-coded
+home path. Extracting universally reusable versions is future work.
 
 ### Window Managers
 
@@ -140,35 +140,48 @@ The actual command may differ between Hyprland, i3 and DWM.
 Functionality that depends on compositor-specific features,
 animations or display-server capabilities may not be portable.
 
-## 6. Proposed Repository Organization
+## 6. Approved Repository Organization
 
-configs/
-    shared/
-    window-managers/
-        hyprland/
-        i3/
-        dwm/
-    desktop-shells/
-        quickshell/
-    presets/
-        omarchy/
-        jakoolit/
-    distributions/
-        arch/
-        debian/
-        fedora/
+The owner approved a simple role-based layout on 2026-10-09:
 
-profiles/
-projects/
-labs/
+```text
+wm/
+    hyprland/        # planned independent build
+    i3/              # imported independent X11 configuration
+    dwm/             # planned independent build
+shell/
+    quickshell/      # planned reusable desktop UI
+presets/
+    jakoolit/        # imported Hyprland preset and original Git history
+    omarchy/         # saved user overrides and theme
+shared/
+    zsh/             # personal Zsh configuration
+    starship/        # personal Starship configuration
 docs/
-reports/
 needs/
+reports/
+AGENTS.md
+README.md
+ROADMAP.md
+```
 
-This is the target structure.
+This diagram shows the **intended** paths, not a claim that all planned
+directories or components have been implemented. Avoid empty placeholders.
+Existing historical component contents are preserved until the owner
+approves later redesign and Quickshell-related cleanup.
 
-Existing files must not be moved simply to match this
-proposal without an approved migration plan.
+Imported preset files are not the source of truth for new, independent builds.
+The JaKooLit profile directories `common/`, `laptop/`, `desktop/` and
+`profiles/` are retained directly under `presets/jakoolit/` (removing
+the redundant `jakoolithyprl/` wrapper). Local `active/` is still generated
+and excluded from Git. Relative-path setup code and documentation must follow
+the new paths; actual desktop compatibility remains unverified.
+
+The owner prefers future independent builds to primarily consist of files
+that can be copied or symlinked, with Quickshell handling supported desktop
+UI responsibilities. This is tracked as
+[N-001](../needs/N-001-lean-config-only-desktops.md), not approval to strip
+the imported working presets or assume universal Quickshell support.
 
 ## 7. Development Approach
 
