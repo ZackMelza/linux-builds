@@ -134,7 +134,7 @@ without unnecessarily rewriting their functionality.
 - [ ] Prepare the final configuration directory structure.
 - [ ] Move existing Omarchy configurations.
 - [ ] Move the existing Zsh configuration.
-- [ ] Import Jakoolit customizations.
+- [x] Import Jakoolit customizations (snapshot imported; history and live verification pending).
 - [x] Import i3 configurations (live deployment verification pending).
 - [ ] Import the DWM project.
 - [ ] Create or update individual component READMEs.
@@ -371,8 +371,8 @@ Current migration work is tracked through Git branches and pull requests.
 
 Immediate priorities:
 
-1. Review the i3 import and verify it in a suitable X11 environment.
-2. Migrate the JaKooLit preset with attribution and installer-safety safeguards.
+1. Defer i3 live verification to a VM and redesign until after Quickshell.
+2. Review JaKooLit snapshot and complete source-history preservation and verification.
 3. Migrate the DWM build with installer/uninstaller hardening.
 4. Reorganize existing Omarchy and Zsh files after planning their moves.
 
