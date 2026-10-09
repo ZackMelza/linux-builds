@@ -2,7 +2,7 @@
 
 **Status:** Imported preset with original Git ancestry preserved; static and live verification pending.
 
-This is the existing, customized JaKooLit **preset**, not the future independent Linux-builds Hyprland configuration. Source: [ZackMelza/hyprland](https://github.com/ZackMelza/hyprland) at [`001438a3807b0ed84feab4d0b4730504713e4800`](https://github.com/ZackMelza/hyprland/commit/001438a3807b0ed84feab4d0b4730504713e4800).
+This is the existing, customized JaKooLit **preset**, not the future independent Linux-builds Hyprland configuration. The profile installer and its health check resolve their root relative to their own location. **Do not use the original repository path when invoking the migrated scripts.** Source: [ZackMelza/hyprland](https://github.com/ZackMelza/hyprland) at [`001438a3807b0ed84feab4d0b4730504713e4800`](https://github.com/ZackMelza/hyprland/commit/001438a3807b0ed84feab4d0b4730504713e4800).
 
 ## Licensing and provenance
 
@@ -12,7 +12,7 @@ The upstream [JaKooLit/Hyprland-Dots](https://github.com/JaKooLit/Hyprland-Dots)
 
 ## Structure and configuration
 
-The original `jakoolithyprl/` layout is intentionally maintained:
+The original profile directories remain intact, but the extra `jakoolithyprl/` wrapper was removed so their files now live directly under `presets/jakoolit/`:
 
 - `common/` — shared JaKooLit configuration and inherited scripts.
 - `profiles/` and `laptop/`, `desktop/` — machine-dependent configuration.
@@ -31,7 +31,7 @@ Original notes target Hyprland 0.55.x, using Wayland with the JaKooLit ecosystem
 From the root of the Linux-builds checkout:
 
 ```bash
-bash configs/presets/jakoolit/jakoolithyprl/set-hypr-profile.sh --profile desktop --dry-run
+bash presets/jakoolit/set-hypr-profile.sh --profile desktop --dry-run
 ```
 
 The dry run is read-only. **Do not run the actual installer on your daily machine without inspecting existing `~/.config/hypr`, the environment profile and systemd user services.** The real setup generates `active/`, links Hyprland configuration and enables the guard; its rollback has not been tested. Choose `--profile laptop` or omit the profile to auto-detect. No installation was performed during migration.
@@ -39,7 +39,7 @@ The dry run is read-only. **Do not run the actual installer on your daily machin
 To validate a configured test machine:
 
 ```bash
-bash configs/presets/jakoolit/jakoolithyprl/check-hypr.sh
+bash presets/jakoolit/check-hypr.sh
 hyprctl configerrors
 ```
 
@@ -53,6 +53,6 @@ Existing user environment profile files, Hyprland links/configs and guard unit f
 
 ## Verification and limitations
 
-The imported source tree and executable modes are preserved, apart from this component README and the deliberately adjusted profile installer. Static `bash -n`, ShellCheck, the generated tree, desktop startup, guard and runtime settings **still require testing** in a suitable environment. No compatibility or fresh-host install is claimed.
+The source content and executable modes are preserved, apart from this component README, the intentionally adjusted profile installer and the `.gitignore` patterns updated for the relocated profile tree. Static `bash -n`, ShellCheck, the generated tree, desktop startup, guard and runtime settings **still require testing** in a suitable environment. No compatibility or fresh-host install is claimed.
 
-Phase 03 may extract shared utilities after the preset has been verified. See the [migration audit](../../../docs/repository-audit.md).
+Phase 03 may extract shared utilities after the preset has been verified. See the [migration audit](../../docs/repository-audit.md).

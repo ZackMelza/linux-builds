@@ -29,6 +29,11 @@ migration branch.
 
 ## Architecture
 
+The directory layout is organized by role: `wm/` for independent window
+managers, `shell/` for desktop interfaces, `presets/` for imported existing
+setups, and `shared/` for reusable configuration. Only currently maintained
+components have directories; planned components are not empty placeholders.
+
 The architecture separates the personal Linux environment
 into several independent components.
 
@@ -57,10 +62,11 @@ design principles and development approach.
 
 | Component | Description |
 |---|---|
-| [Omarchy](omarchy/README.md) | Personal Omarchy configurations, overrides and Symbiote theme |
-| [Zsh](zsh/) | Personal Zsh and Starship configurations |
-| [i3](configs/window-managers/i3/README.md) | Imported independent X11 configuration; live verification pending |
-| [JaKooLit preset](configs/presets/jakoolit/README.md) | Imported preset and Git history; static and live verification pending |
+| [Omarchy](presets/omarchy/README.md) | Personal Omarchy configurations, overrides and Symbiote theme |
+| [Zsh](shared/zsh/README.md) | Personal Zsh configuration (portability not yet verified) |
+| [Starship](shared/starship/README.md) | Personal Starship prompt configuration (machine-specific path) |
+| [i3](wm/i3/README.md) | Imported independent X11 configuration; live verification pending |
+| [JaKooLit preset](presets/jakoolit/README.md) | Imported preset and Git history; static and live verification pending |
 
 ## Planned Components
 

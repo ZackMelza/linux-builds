@@ -31,10 +31,10 @@ This is an observed command/dependency inventory, **not** a validated distro pac
 From the **root of Linux-builds**:
 
 ```bash
-bash configs/window-managers/i3/install.sh
+bash wm/i3/install.sh
 ```
 
-The installer creates symlinks for all files under `config/` and `local/bin/`, targeting `~/.config/` and `~/.local/bin/` respectively. Existing destination files or symlinks are moved to timestamped `.backup.*` paths first. Reruns avoid replacing already-correct symlinks; backup names avoid collisions. No root permissions or package installation are required.
+After this directory move, the installer continues to resolve paths relative to its own location. It creates symlinks for all files under `config/` and `local/bin/`, targeting `~/.config/` and `~/.local/bin/` respectively. Existing destination files or symlinks are moved to timestamped `.backup.*` paths first. Reruns avoid replacing already-correct symlinks; backup names avoid collisions. No root permissions or package installation are required.
 
 **Caution:** Review the target files before running it. The installer has no dry-run option and uses shared locations such as `~/.config/picom` and generic `~/.local/bin` command names, which could conflict with another desktop configuration. It has **not** been executed as part of this migration. Do not assume that it can safely install alongside the DWM/Omarchy configurations.
 
@@ -64,8 +64,8 @@ Common shortcuts include `Super+Return` (terminal), `Super+R` (Rofi launcher), `
 Static checks to run in a checkout:
 
 ```bash
-bash -n configs/window-managers/i3/install.sh
-bash -n configs/window-managers/i3/local/bin/i3-startup
+bash -n wm/i3/install.sh
+bash -n wm/i3/local/bin/i3-startup
 ```
 
 After dependencies are installed and with i3 available, validate the configuration and then test in a disposable X11 session:
@@ -94,4 +94,4 @@ Potential Phase 03 work includes extracting reusable audio, wallpaper and editor
 
 Imported from [ZackMelza/i3-configs](https://github.com/ZackMelza/i3-configs) at commit [`8382eb2921bb6b57e2f794dacac708045ab4494f`](https://github.com/ZackMelza/i3-configs/commit/8382eb2921bb6b57e2f794dacac708045ab4494f). The original repository has one commit; it remains intact, and this import does not graft unrelated Git history.
 
-See the [migration audit](../../../docs/repository-audit.md) for background and remaining requirements.
+See the [migration audit](../../docs/repository-audit.md) for background and remaining requirements.

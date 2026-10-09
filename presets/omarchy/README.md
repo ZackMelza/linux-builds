@@ -1,13 +1,13 @@
 # Omarchy component
 
-This directory is the Omarchy component of Linux-builds. It stores Zack's
+This directory is the Omarchy preset of Linux-builds. It stores Zack's
 personal Omarchy/Hyprland overrides. Omarchy's packaged defaults remain
 managed by Omarchy; these are the user files saved for restoration after a
 fresh installation.
 
 ## Files to keep backed up
 
-The reusable configuration is under `omarchy/hypr/`:
+The reusable configuration is under `presets/omarchy/hypr/`:
 
 - `hyprland.lua` — loads the personal modules, including workspace rules.
 - `input.lua` — US/Greek keyboard layouts, Alt+Shift switching, and normal Caps Lock behavior.
@@ -15,12 +15,12 @@ The reusable configuration is under `omarchy/hypr/`:
 - `workspace_rules.lua` — application-to-workspace placement rules.
 - `looknfeel.lua` — personal window spacing, corners and border colors.
 
-The saved personal Zsh configuration is under `zsh/`:
+The saved personal Zsh configuration is under `shared/zsh/` and `shared/starship/`:
 
 - `.zshrc` — loads Omarchy's user environment setup.
-- `starship.toml` — full-path prompt and Git status/counts.
+- `starship.toml` (in `shared/starship/`) — full-path prompt and Git status/counts.
 
-The custom Omarchy theme is under `omarchy/themes/symbiote/`:
+The custom Omarchy theme is under `presets/omarchy/themes/symbiote/`:
 
 - `colors.toml` — black-suit palette with cool web highlights and crimson accents.
 - `backgrounds/` — matching wallpapers, including the original
@@ -67,22 +67,22 @@ if [ -e "$HOME/.config/omarchy/themes/symbiote" ] || [ -L "$HOME/.config/omarchy
 fi
 printf 'Backups saved to %s\n' "$backup_dir"
 
-luac -p ~/linux-builds/omarchy/hypr/hyprland.lua
-luac -p ~/linux-builds/omarchy/hypr/input.lua
-luac -p ~/linux-builds/omarchy/hypr/bindings.lua
-luac -p ~/linux-builds/omarchy/hypr/workspace_rules.lua
-luac -p ~/linux-builds/omarchy/hypr/looknfeel.lua
+luac -p ~/linux-builds/presets/omarchy/hypr/hyprland.lua
+luac -p ~/linux-builds/presets/omarchy/hypr/input.lua
+luac -p ~/linux-builds/presets/omarchy/hypr/bindings.lua
+luac -p ~/linux-builds/presets/omarchy/hypr/workspace_rules.lua
+luac -p ~/linux-builds/presets/omarchy/hypr/looknfeel.lua
 
 mkdir -p ~/.config/hypr ~/.config/omarchy/themes/symbiote
 
-cp ~/linux-builds/omarchy/hypr/hyprland.lua ~/.config/hypr/
-cp ~/linux-builds/omarchy/hypr/input.lua ~/.config/hypr/
-cp ~/linux-builds/omarchy/hypr/bindings.lua ~/.config/hypr/
-cp ~/linux-builds/omarchy/hypr/workspace_rules.lua ~/.config/hypr/
-cp ~/linux-builds/omarchy/hypr/looknfeel.lua ~/.config/hypr/
-cp ~/linux-builds/zsh/.zshrc ~/.zshrc
-cp ~/linux-builds/zsh/starship.toml ~/.config/starship.toml
-cp -a ~/linux-builds/omarchy/themes/symbiote/. ~/.config/omarchy/themes/symbiote/
+cp ~/linux-builds/presets/omarchy/hypr/hyprland.lua ~/.config/hypr/
+cp ~/linux-builds/presets/omarchy/hypr/input.lua ~/.config/hypr/
+cp ~/linux-builds/presets/omarchy/hypr/bindings.lua ~/.config/hypr/
+cp ~/linux-builds/presets/omarchy/hypr/workspace_rules.lua ~/.config/hypr/
+cp ~/linux-builds/presets/omarchy/hypr/looknfeel.lua ~/.config/hypr/
+cp ~/linux-builds/shared/zsh/.zshrc ~/.zshrc
+cp ~/linux-builds/shared/starship/starship.toml ~/.config/starship.toml
+cp -a ~/linux-builds/presets/omarchy/themes/symbiote/. ~/.config/omarchy/themes/symbiote/
 
 hyprctl reload
 hyprctl configerrors
@@ -111,7 +111,7 @@ After changing a user config file, copy it back into the Linux-builds repository
 commit it:
 
 ```bash
-cp ~/.config/hypr/<changed-file>.lua ~/linux-builds/omarchy/hypr/
+cp ~/.config/hypr/<changed-file>.lua ~/linux-builds/presets/omarchy/hypr/
 git -C ~/linux-builds add omarchy/hypr/<changed-file>.lua
 git -C ~/linux-builds commit -m "Describe the customization"
 git -C ~/linux-builds push

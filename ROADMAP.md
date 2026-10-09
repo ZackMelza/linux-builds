@@ -70,9 +70,9 @@ findings, unresolved migration gates and the approved import order.
 
 | Source Repository | Proposed Destination |
 |---|---|
-| hyprland (Jakoolit customizations) | configs/presets/jakoolit/ |
-| i3-configs | configs/window-managers/i3/ |
-| dwm-build | configs/window-managers/dwm/ |
+| hyprland (Jakoolit customizations) | presets/jakoolit/ |
+| i3-configs | wm/i3/ |
+| dwm-build | wm/dwm/ |
 
 Existing Omarchy and Zsh configurations will also be
 reorganized during the approved migration phase.
@@ -131,9 +131,9 @@ without unnecessarily rewriting their functionality.
 
 ### Tasks
 
-- [ ] Prepare the final configuration directory structure.
-- [ ] Move existing Omarchy configurations.
-- [ ] Move the existing Zsh configuration.
+- [x] Adopt and organize the role-based `wm/`, `shell/`, `presets/`, `shared/` layout (planned folders appear only when implemented).
+- [x] Move existing Omarchy configurations into `presets/omarchy/` (runtime restore unverified).
+- [x] Move Zsh and Starship into `shared/` (portability remains unverified).
 - [x] Import Jakoolit customizations (Git ancestry preserved; static and live verification pending).
 - [x] Import i3 configurations (live deployment verification pending).
 - [ ] Import the DWM project.
@@ -374,7 +374,7 @@ Immediate priorities:
 1. Defer i3 live verification to a VM and redesign until after Quickshell.
 2. Review the JaKooLit migration and complete static and runtime verification.
 3. Migrate the DWM build with installer/uninstaller hardening.
-4. Reorganize existing Omarchy and Zsh files after planning their moves.
+4. Review the updated Omarchy and shared Zsh/Starship paths and test restoration on a suitable environment.
 
 Do not begin independent window manager or Quickshell
 development before the relevant architectural requirements
@@ -388,6 +388,9 @@ This roadmap provides high-level direction.
 
 Specific implementation requirements belong in needs/.
 Substantial completed work belongs in reports/.
+
+The role-based directory layout was approved on 2026-10-09; the Quickshell-first,
+config-only redesign is tracked separately in N-001 for later planning.
 
 The repository owner controls:
 
