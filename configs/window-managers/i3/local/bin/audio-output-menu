@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v rofi >/dev/null 2>&1; then
+  exit 1
+fi
+
+if command -v pactl >/dev/null 2>&1; then
+  current="$(pactl get-default-sink 2>/dev/null || true)"
+  mapfile -t sinks < <(pactl list short sinks 2>/dev/null | awk '{print $2}')
+
+  if [[ "${#sinks[@]}" -eq 0 ]]; then
+    rofi -e "No audio outputs found"
+    exit 0
+  fi
+
+  menu_input=""
+  for sink in "${sinks[@]}"; do
+    if [[ "$sink" == "$current" ]]; then
+      menu_input+="* $sink"$'\n'
+    else
+      menu_input+="$sink"$'\n'
+    fi
+  done
+
+  choice="$(printf '%s' "$menu_input" | rofi -dmenu -p 'Audio output')"
+  choice="${choice#\* }"
+  [[ -z "$choice" ]] && exit 0
+
+  pactl set-default-sink "$choice"
+  while read -r input_id _; do
+    [[ -n "$input_id" ]] && pactl move-sink-input "$input_id" "$choice"
+  done < <(pactl list short sink-inputs 2>/dev/null | awk '{print $1, $2}')
+  exit 0
+fi
+
+if command -v wpctl >/dev/null 2>&1; then
+  mapfile -t nodes < <(wpctl status 2>/dev/null | awk '/Sinks:/{flag=1; next} /^Sources:/{flag=0} flag && /\./ {print $2, $3, $4, $5, $6, $7}')
+  if [[ "${#nodes[@]}" -eq 0 ]]; then
+    rofi -e "No audio outputs found"
+    exit 0
+  fi
+
+  choice="$(printf '%s\n' "${nodes[@]}" | rofi -dmenu -p 'Audio output')"
+  [[ -z "$choice" ]] && exit 0
+  node_id="$(awk '{print $1}' <<< "$choice")"
+  wpctl set-default "$node_id"
+fi

@@ -1,0 +1,158 @@
+# i3 config for Linux Mint
+set $mod Mod4
+set $terminal xfce4-terminal
+set $browser brave-browser
+set $files thunar
+set $editor ~/.local/bin/open-vscode
+set $launcher rofi -show drun
+
+set $ws1 "1:web"
+set $ws2 "2:files"
+set $ws3 "3:code"
+set $ws4 "4:chat"
+set $ws5 "5:media"
+set $ws6 "6:misc"
+set $ws7 "7:vm"
+set $ws8 "8:tmp"
+set $ws9 "9:idle"
+set $ws10 "10:spare"
+
+set $bg #101827
+set $bg_alt #17233a
+set $fg #f5f7ff
+set $muted #9fb2d0
+set $accent #ff7a59
+set $accent_2 #7cdbff
+set $accent_3 #b7ff6a
+set $urgent #ff4d6d
+
+font pango:monospace 10
+floating_modifier $mod
+focus_follows_mouse no
+mouse_warping none
+default_border pixel 1
+default_floating_border pixel 1
+hide_edge_borders smart_no_gaps
+focus_on_window_activation smart
+
+exec_always --no-startup-id ~/.local/bin/i3-startup
+
+# Core launcher bindings
+bindsym $mod+Return exec --no-startup-id $terminal
+bindsym $mod+r exec --no-startup-id $launcher
+bindsym $mod+b exec --no-startup-id $browser
+bindsym $mod+e exec --no-startup-id $files
+bindsym $mod+c exec --no-startup-id $editor
+
+# Close and force-kill
+bindsym $mod+q kill
+bindsym $mod+Shift+q exec --no-startup-id ~/.local/bin/kill-focused-window
+
+# Session control
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec --no-startup-id i3-msg exit
+bindsym $mod+Shift+p exec --no-startup-id ~/.local/bin/power-menu
+
+# Focus movement
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Window movement
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Layout controls
+bindsym $mod+f fullscreen toggle
+bindsym $mod+v split v
+bindsym $mod+s split h
+bindsym $mod+space focus mode_toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+a focus parent
+
+# Resize mode
+mode "resize" {
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+Shift+z mode "resize"
+
+# Workspaces
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Direct app placement
+assign [class="(?i)brave-browser"] $ws1
+assign [class="(?i)thunar"] $ws2
+assign [class="(?i)code"] $ws3
+
+# Scratchpad
+bindsym $mod+minus move scratchpad
+bindsym $mod+equal scratchpad show
+
+# Bar
+bar {
+    status_command ~/.local/bin/i3bar-status
+    position top
+    tray_output primary
+    workspace_buttons yes
+    workspace_min_width 90
+    strip_workspace_numbers no
+    separator_symbol "  •  "
+    mode dock
+    colors {
+        background $bg
+        statusline $fg
+        separator $bg_alt
+        focused_workspace $accent $accent $bg
+        active_workspace $accent_2 $accent_2 $bg
+        inactive_workspace $bg_alt $bg_alt $muted
+        urgent_workspace $urgent $urgent $bg
+    }
+}
+
+client.focused          $accent $accent $bg $accent_2 $accent
+client.focused_inactive $bg_alt $bg_alt $fg $bg_alt $bg_alt
+client.unfocused        $bg $bg $muted $bg $bg
+client.urgent           $urgent $urgent $bg $urgent $urgent
+client.placeholder      $bg $bg $muted $bg $bg

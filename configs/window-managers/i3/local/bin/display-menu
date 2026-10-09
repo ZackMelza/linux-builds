@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v rofi >/dev/null 2>&1; then
+  exit 1
+fi
+
+if ! command -v xrandr >/dev/null 2>&1; then
+  rofi -e "xrandr is not installed"
+  exit 0
+fi
+
+mapfile -t outputs < <(xrandr --query | awk '/ connected/{print $1}')
+
+if [[ "${#outputs[@]}" -eq 0 ]]; then
+  rofi -e "No displays found"
+  exit 0
+fi
+
+menu_items=("auto")
+for output in "${outputs[@]}"; do
+  menu_items+=("only $output")
+done
+
+if [[ "${#outputs[@]}" -ge 2 ]]; then
+  menu_items+=("mirror all")
+fi
+
+choice="$(printf '%s\n' "${menu_items[@]}" | rofi -dmenu -p 'Display')"
+[[ -z "$choice" ]] && exit 0
+
+case "$choice" in
+  auto)
+    cmd=(xrandr --auto)
+    ;;
+  'mirror all')
+    primary="${outputs[0]}"
+    cmd=(xrandr --output "$primary" --auto)
+    for output in "${outputs[@]:1}"; do
+      cmd+=(--output "$output" --auto --same-as "$primary")
+    done
+    ;;
+  only\ *)
+    target="${choice#only }"
+    cmd=(xrandr)
+    for output in "${outputs[@]}"; do
+      if [[ "$output" == "$target" ]]; then
+        cmd+=(--output "$output" --auto --primary)
+      else
+        cmd+=(--output "$output" --off)
+      fi
+    done
+    ;;
+  *)
+    exit 0
+    ;;
+esac
+
+"${cmd[@]}"

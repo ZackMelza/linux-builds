@@ -114,7 +114,7 @@ standards before configuration migrations begin.
 
 ## Phase 02 — Configuration Migration
 
-Status: Planned
+Status: In Progress
 
 ### Learning Objectives
 
@@ -135,7 +135,7 @@ without unnecessarily rewriting their functionality.
 - [ ] Move existing Omarchy configurations.
 - [ ] Move the existing Zsh configuration.
 - [ ] Import Jakoolit customizations.
-- [ ] Import i3 configurations.
+- [x] Import i3 configurations (live deployment verification pending).
 - [ ] Import the DWM project.
 - [ ] Create or update individual component READMEs.
 - [ ] Verify migrated components.
@@ -365,17 +365,16 @@ during earlier phases.
 # 4. Current Development Focus
 
 Completed milestones: Repository Audit (Phase 00) and Repository Foundation
-(Phase 01). Next milestone: Configuration Migration (Phase 02, not started).
+(Phase 01). Current milestone: Configuration Migration (Phase 02, in progress).
 
-Current working branch:
-
-docs/repository-audit
+Current migration work is tracked through Git branches and pull requests.
 
 Immediate priorities:
 
-1. Use the approved migration plan and prepare the Phase 02 directory structure.
-2. Migrate i3 first to validate the new structure.
-3. Migrate the JaKooLit preset, then the DWM build.
+1. Review the i3 import and verify it in a suitable X11 environment.
+2. Migrate the JaKooLit preset with attribution and installer-safety safeguards.
+3. Migrate the DWM build with installer/uninstaller hardening.
+4. Reorganize existing Omarchy and Zsh files after planning their moves.
 
 Do not begin independent window manager or Quickshell
 development before the relevant architectural requirements
