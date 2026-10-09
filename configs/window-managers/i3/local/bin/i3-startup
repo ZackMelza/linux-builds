@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+run_if_present() {
+  local cmd="$1"
+  shift
+  if command -v "$cmd" >/dev/null 2>&1; then
+    "$@" >/dev/null 2>&1 &
+  fi
+}
+
+run_if_present xsetroot xsetroot -solid "#101827"
+if [[ -x "$HOME/.local/bin/keyboard-layout-init" ]]; then
+  "$HOME/.local/bin/keyboard-layout-init" >/dev/null 2>&1
+fi
+if command -v feh >/dev/null 2>&1 && [[ -x "$HOME/.local/bin/wallpaper-rotator" ]]; then
+  pkill -f -- "$HOME/.local/bin/wallpaper-rotator" >/dev/null 2>&1 || true
+  "$HOME/.local/bin/wallpaper-rotator" >/dev/null 2>&1 &
+fi
+
+run_if_present nm-applet nm-applet
+run_if_present picom picom --config ~/.config/picom/picom.conf --experimental-backends
+run_if_present dunst dunst
+run_if_present pasystray pasystray
+run_if_present blueman-applet blueman-applet
+run_if_present xfce4-power-manager xfce4-power-manager
+run_if_present udiskie udiskie -t

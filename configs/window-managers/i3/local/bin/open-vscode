@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v code >/dev/null 2>&1; then
+  exec code "$@"
+fi
+
+if command -v codium >/dev/null 2>&1; then
+  exec codium "$@"
+fi
+
+if flatpak info com.visualstudio.code >/dev/null 2>&1; then
+  exec flatpak run com.visualstudio.code "$@"
+fi
+
+printf '%s\n' 'VS Code is not installed. Install `code` or the Flatpak `com.visualstudio.code`.' >&2
+exit 1

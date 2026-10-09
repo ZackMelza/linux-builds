@@ -1,0 +1,236 @@
+#!/usr/bin/env python3
+import json
+import os
+import re
+import signal
+import subprocess
+import sys
+import threading
+import time
+from pathlib import Path
+
+STOP = False
+SCROLL_STEP = 5
+REFRESH_INTERVAL = 1.0
+MAX_VOLUME = 150
+refresh_event = threading.Event()
+
+
+def run(cmd):
+    return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, check=False).stdout.strip()
+
+
+def command_exists(cmd):
+    from shutil import which
+    return which(cmd) is not None
+
+
+def get_volume():
+    if command_exists("pactl"):
+        out = run(["pactl", "get-sink-volume", "@DEFAULT_SINK@"])
+        mute = run(["pactl", "get-sink-mute", "@DEFAULT_SINK@"])
+        match = re.search(r"(\d+)%", out)
+        pct = match.group(1) if match else None
+        muted = "yes" in mute.lower()
+        if pct is not None:
+            return f"vol:{'mute' if muted else pct + '%'}"
+    if command_exists("wpctl"):
+        out = run(["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"])
+        match = re.search(r"([0-9.]+)", out)
+        if match:
+            pct = int(float(match.group(1)) * 100)
+            muted = "MUTED" in out.upper()
+            return f"vol:{'mute' if muted else str(pct) + '%'}"
+    return "vol:na"
+
+
+def current_volume_percent():
+    if command_exists("pactl"):
+        out = run(["pactl", "get-sink-volume", "@DEFAULT_SINK@"])
+        match = re.search(r"(\d+)%", out)
+        if match:
+            return int(match.group(1))
+    if command_exists("wpctl"):
+        out = run(["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"])
+        match = re.search(r"([0-9.]+)", out)
+        if match:
+            return int(float(match.group(1)) * 100)
+    return None
+
+
+def set_volume(delta):
+    current = current_volume_percent()
+    if command_exists("pactl"):
+        if delta == 0:
+            subprocess.run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle"], check=False)
+        elif delta < 0 and current is not None and current > 100:
+            subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", "100%"], check=False)
+        else:
+            if current is None:
+                if delta > 0:
+                    subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"+{delta}%"], check=False)
+                else:
+                    subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{delta}%"], check=False)
+            else:
+                target = max(0, min(MAX_VOLUME, current + delta))
+                subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{target}%"], check=False)
+    elif command_exists("wpctl"):
+        if delta == 0:
+            subprocess.run(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"], check=False)
+        elif delta < 0 and current is not None and current > 100:
+            subprocess.run(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "1.0"], check=False)
+        else:
+            if current is None:
+                if delta > 0:
+                    subprocess.run(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", f"{delta}%+"], check=False)
+                else:
+                    subprocess.run(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", f"{abs(delta)}%-"], check=False)
+            else:
+                target = max(0, min(MAX_VOLUME, current + delta))
+                subprocess.run(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", str(target / 100)], check=False)
+    refresh_event.set()
+
+
+def get_battery():
+    base = Path("/sys/class/power_supply")
+    for bat in sorted(base.glob("BAT*")):
+        cap = bat / "capacity"
+        status = bat / "status"
+        if cap.exists():
+            try:
+                pct = cap.read_text().strip()
+                st = status.read_text().strip() if status.exists() else ""
+                return f"bat:{st[:1].lower()}{pct}%"
+            except OSError:
+                continue
+    return None
+
+
+def time_block():
+    return time.strftime("%Y-%m-%d %H:%M")
+
+
+def keyboard_layout():
+    out = run(["xset", "-q"])
+    if re.search(r"Scroll Lock:\s+on", out):
+        return "kbd:gr"
+    return "kbd:us"
+
+
+def action(cmd):
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def open_mixer():
+    if command_exists("pavucontrol"):
+        action(["pavucontrol"])
+    elif command_exists("xfce4-mixer"):
+        action(["xfce4-mixer"])
+    elif command_exists("rofi"):
+        action(["rofi", "-e", "Install pavucontrol: sudo apt install pavucontrol"])
+
+
+def handle_click(event):
+    name = event.get("name", "")
+    button = event.get("button")
+    if name == "volume":
+        if button == 1:
+            set_volume(0)
+        elif button == 2:
+            open_mixer()
+        elif button == 4:
+            set_volume(SCROLL_STEP)
+        elif button == 5:
+            set_volume(-SCROLL_STEP)
+        return
+    if name == "audio" and button == 1:
+        action([str(Path.home() / ".local/bin/audio-output-menu")])
+        refresh_event.set()
+        return
+    if name == "display" and button == 1:
+        action([str(Path.home() / ".local/bin/display-menu")])
+        refresh_event.set()
+        return
+    if name == "power" and button == 1:
+        action([str(Path.home() / ".local/bin/power-menu")])
+        refresh_event.set()
+        return
+    if name == "keyboard" and button == 1:
+        action([str(Path.home() / ".local/bin/toggle-keyboard-layout")])
+        refresh_event.set()
+
+
+def click_reader():
+    global STOP
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+        if line == "[":
+            continue
+        if line.startswith(","):
+            line = line[1:].lstrip()
+        if line.startswith("["):
+            line = line[1:].lstrip()
+        if line.endswith("]"):
+            line = line[:-1].rstrip()
+        if not line:
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        handle_click(event)
+        if STOP:
+            return
+
+
+def blocks():
+    vol = get_volume()
+    bat = get_battery()
+    items = [
+        {"full_text": keyboard_layout(), "name": "keyboard", "color": "#f5f7ff", "separator": True},
+        {"full_text": f"♪ {vol}", "name": "volume", "color": "#7cdbff", "separator": True},
+        {"full_text": "audio", "name": "audio", "color": "#b7ff6a", "separator": True},
+        {"full_text": "display", "name": "display", "color": "#ffcc66", "separator": True},
+    ]
+    if bat:
+        items.append({"full_text": f"▣ {bat}", "name": "battery", "color": "#b7ff6a"})
+    items.extend(
+        [
+            {"full_text": "⏻ power", "name": "power", "color": "#ff4d6d", "separator": True},
+            {"full_text": f"◷ {time_block()}", "name": "clock", "color": "#f5f7ff"},
+        ]
+    )
+    return items
+
+
+def main():
+    print('{"version":1,"click_events":true}', flush=True)
+    print("[", flush=True)
+
+    t = threading.Thread(target=click_reader, daemon=True)
+    t.start()
+
+    first = True
+    while True:
+        line = json.dumps(blocks(), ensure_ascii=False)
+        if first:
+            print(line)
+            first = False
+        else:
+            print("," + line)
+        sys.stdout.flush()
+        refresh_event.wait(REFRESH_INTERVAL)
+        refresh_event.clear()
+
+
+if __name__ == "__main__":
+    def _sigterm(_signo, _frame):
+        global STOP
+        STOP = True
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, _sigterm)
+    signal.signal(signal.SIGINT, _sigterm)
+    main()

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+config_file="${XDG_CONFIG_HOME:-$HOME/.config}/wallpaper-rotator.conf"
+if [[ -f "$config_file" ]]; then
+  # shellcheck disable=SC1090
+  source "$config_file"
+fi
+
+: "${WALLPAPER_DIR:=$HOME/Pictures/Wallpapers}"
+: "${WALLPAPER_INTERVAL:=1800}"
+: "${WALLPAPER_FALLBACK:=$HOME/Pictures/terminal_codex.png}"
+
+set_wallpaper() {
+  local wallpaper="$1"
+  feh --bg-fill "$wallpaper"
+}
+
+pick_random_wallpaper() {
+  find "$WALLPAPER_DIR" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print0 \
+    | shuf -z -n 1 \
+    | tr -d '\0'
+}
+
+while true; do
+  wallpaper="$(pick_random_wallpaper || true)"
+  if [[ -n "${wallpaper:-}" ]]; then
+    set_wallpaper "$wallpaper"
+  elif [[ -f "$WALLPAPER_FALLBACK" ]]; then
+    set_wallpaper "$WALLPAPER_FALLBACK"
+  fi
+  sleep "$WALLPAPER_INTERVAL"
+done

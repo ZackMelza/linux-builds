@@ -19,14 +19,12 @@ components that can be combined according to the target system.
 
 ## Project Status
 
-**In development — Repository Foundation**
+**In development — Configuration Migration (Phase 02)**
 
-The project is currently establishing its architecture,
-documentation standards and repository structure.
-
-Existing configurations will be reviewed and migrated
-progressively. Planned components should not be considered
-implemented or tested until documented otherwise.
+The repository audit and foundation are complete. Existing Linux
+configurations are now being imported one component at a time.
+The i3 configuration has been imported, but live deployment has not
+been verified. Other planned components remain unimplemented or untested.
 
 ## Architecture
 
@@ -60,6 +58,7 @@ design principles and development approach.
 |---|---|
 | [Omarchy](omarchy/README.md) | Personal Omarchy configurations, overrides and Symbiote theme |
 | [Zsh](zsh/) | Personal Zsh and Starship configurations |
+| [i3](configs/window-managers/i3/README.md) | Imported independent X11 configuration; live verification pending |
 
 ## Planned Components
 
@@ -68,7 +67,6 @@ The following components will be introduced progressively:
 ### Window Managers
 
 - Hyprland — independent personal configuration.
-- i3 — personal X11 configuration.
 - DWM — personal DWM build.
 
 ### Configuration Presets
@@ -130,4 +128,5 @@ rather than assumed to work universally.
 
 ## License
 
-To be determined following the repository and dependency audit.
+No repository-wide license has been selected. Imported components may have
+separate upstream licensing requirements; see individual component documentation.
