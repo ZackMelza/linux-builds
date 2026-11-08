@@ -7,9 +7,9 @@
 
 ## Problem
 
-The daily-use configuration is still deployed from the original `ZackMelza/hyprland` repository, using the generated `jakoolithyprl/active/` tree. Its `hyprland.conf` sources JaKooLit's split `.conf` configuration files. On 2026-11-08, the Arch Linux update upgraded Hyprland from `0.56.2-4` to `0.57.1-1`. Hyprland 0.57 removed support for the legacy Hyprland `.conf` configuration format and generated a default `hyprland.lua`; the personal desktop configuration stopped loading. This can happen without `hyprctl configerrors` reporting errors.
+The daily-use configuration is deployed from the original `ZackMelza/hyprland` repository, using the generated `jakoolithyprl/active/` tree. On 2026-11-08, Arch Linux upgraded Hyprland from `0.56.2-4` to `0.57.1-1`; Hyprland 0.57 removed legacy `.conf` support and generated a default `hyprland.lua` that silently bypassed the personal desktop. The original repo now has a working **development-branch** native Lua entrypoint activated on the daily desktop. The old `.conf` sources remain for reference and recovery. This does NOT mean the imported `linux-builds` preset is up-to-date or deployment-ready.
 
-The existing `presets/jakoolit/` import in Linux-builds predates this compatibility change and is not yet live-verified. Its copied files and documentation will become stale as the original repository is migrated.
+The existing `presets/jakoolit/` import in Linux-builds predates this compatibility change and is **out of date**. Its copied files and documentation MUST be reconciled against the final approved original-repo migration commit, including the Lua entrypoint, split modules, guard, profile generator, health checker, and desktop/laptop overrides.
 
 ## Objective
 
@@ -43,8 +43,20 @@ Keep the original JaKooLit-based desktop functional on supported Hyprland releas
 
 ## Notes
 
-Owner decision on 2026-11-08: **prefer Lua migration in the original repo**, rather than an emergency downgrade of Hyprland. The existing old repo remains the daily-use baseline until the Lua path is verified; Linux-builds should be updated later after source changes are complete. This need tracks the pending re-migration and does not assert that a working Lua desktop or live tests already exist.
+Owner decision on 2026-11-08: **prefer Lua migration in the original repo**, rather than an emergency downgrade of Hyprland. The original repository remains the source of truth. The native Lua path is now activated and tested on Zack's daily desktop. **The imported Linux-builds preset must be updated to match the final, approved migration** before it is used for deployment. Track the exact source commit or release and reconcile subsequent upstream fixes rather than treating the static import as automatically synchronized.
 
-## Implementation Report
+## Implementation Report (2026-11-08)
 
-Not yet implemented; source migration and live compatibility testing pending.
+**Original source in progress:** [ZackMelza/hyprland — `fix/hyprland-057-lua-v2`](https://github.com/ZackMelza/hyprland/tree/fix/hyprland-057-lua-v2) and [tracking issue #1](https://github.com/ZackMelza/hyprland/issues/1).
+
+**Observed live result:** Hyprland 0.57.1 accepts the converted Lua modules without configuration errors. The 2026-11-08 read-only health audit reported **25 passed, 4 warnings, 0 failures**. Live-tested: Kitty automatic tiling after a specific rule fix, basic keybindings, wallpaper/Waybar, and functional logout after updating the local wlogout layout. Reboot succeeded. These are observations from the source desktop, **not verification of the Linux-builds import**.
+
+**Still outstanding before declaring full source parity:** review the remaining legacy keybinding behaviors and scripts; validate the Lua-aware installer and guard with a controlled dry-run and real desktop test; test non-default laptop settings, gestures, local monitor/workspace overrides and application-specific rules. The source migration remains on its development branch until approved.
+
+**Mandatory synchronization for Linux-builds:**
+1. After the source PR is approved and merged, pin the final `ZackMelza/hyprland` commit SHA (not simply `main`) and compare it against `presets/jakoolit/`.
+2. Update all applicable migrated Lua files, entrypoints, profile/guard/health-check logic, documentation and local-override contracts. Do not blindly copy the whole runtime-generated `active/` tree or private host data.
+3. Check both desktop and laptop profile behavior, package/runtime dependencies, setup/rollback mechanics, shortcut and startup parity, and distro-specific paths.
+4. Run static checks and a separate controlled Linux-builds preset deployment test; record results and provenance. Only then mark the imported preset synchronized and ready.
+
+**Sync status: BLOCKED on source migration approval. Imported preset not updated.**
