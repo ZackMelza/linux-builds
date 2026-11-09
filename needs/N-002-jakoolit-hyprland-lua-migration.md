@@ -47,16 +47,16 @@ Owner decision on 2026-11-08: **prefer Lua migration in the original repo**, rat
 
 ## Implementation Report (2026-11-08)
 
-**Original source in progress:** [ZackMelza/hyprland — `fix/hyprland-057-lua-v2`](https://github.com/ZackMelza/hyprland/tree/fix/hyprland-057-lua-v2) and [tracking issue #1](https://github.com/ZackMelza/hyprland/issues/1).
+**Original source merged on 2026-11-09:** [PR #4](https://github.com/ZackMelza/hyprland/pull/4), source merge commit [`af674a266144c36d07b039cef3c027934f82bf2f`](https://github.com/ZackMelza/hyprland/commit/af674a266144c36d07b039cef3c027934f82bf2f). The new Lua implementation is in `main`; daily-desktop runtime and remaining parity notes are tracked in [source issue #5](https://github.com/ZackMelza/hyprland/issues/5).
 
 **Observed live result:** Hyprland 0.57.1 accepts the converted Lua modules without configuration errors. The 2026-11-08 read-only health audit reported **25 passed, 4 warnings, 0 failures**. Live-tested: Kitty automatic tiling after a specific rule fix, basic keybindings, wallpaper/Waybar, and functional logout after updating the local wlogout layout. Reboot succeeded. These are observations from the source desktop, **not verification of the Linux-builds import**.
 
-**Still outstanding before declaring full source parity:** review the remaining legacy keybinding behaviors and scripts; validate the Lua-aware installer and guard with a controlled dry-run and real desktop test; test non-default laptop settings, gestures, local monitor/workspace overrides and application-specific rules. The source migration remains on its development branch until approved.
+**Still outstanding before declaring full source parity:** the previously deferred floating/opacity Lua shortcuts are implemented but not interactively verified; legacy helper scripts, non-default laptop settings, gestures, local overrides, and application-specific rules need tests. Guard installation and desktop health checks succeeded. The source migration is now merged; full parity remains separately tracked.
 
 **Mandatory synchronization for Linux-builds:**
-1. After the source PR is approved and merged, pin the final `ZackMelza/hyprland` commit SHA (not simply `main`) and compare it against `presets/jakoolit/`.
+1. Pin the merged source commit `af674a266144c36d07b039cef3c027934f82bf2f` (not simply `main`) and compare it against `presets/jakoolit/`.
 2. Update all applicable migrated Lua files, entrypoints, profile/guard/health-check logic, documentation and local-override contracts. Do not blindly copy the whole runtime-generated `active/` tree or private host data.
 3. Check both desktop and laptop profile behavior, package/runtime dependencies, setup/rollback mechanics, shortcut and startup parity, and distro-specific paths.
 4. Run static checks and a separate controlled Linux-builds preset deployment test; record results and provenance. Only then mark the imported preset synchronized and ready.
 
-**Sync status: BLOCKED on source migration approval. Imported preset not updated.**
+**Sync status: SOURCE MERGED; DOWNSTREAM RE-MIGRATION REQUIRED. Imported preset is still out of date and not deployed.** Track the work in [linux-builds issue #8](https://github.com/ZackMelza/linux-builds/issues/8).
