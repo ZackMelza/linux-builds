@@ -15,6 +15,11 @@ The reusable configuration is under `presets/omarchy/hypr/`:
 - `workspace_rules.lua` — application-to-workspace placement rules.
 - `looknfeel.lua` — personal window spacing, corners and border colors.
 
+The Display panel clone in `presets/omarchy/plugins/zack.monitor/` adds
+Extend and Mirror controls for an external display. It requires Omarchy's
+monitor mirroring command; the panel has been visually checked on the current
+installation, but its controls have not been functionally tested here.
+
 The saved personal Zsh configuration is under `shared/zsh/` and `shared/starship/`:
 
 - `.zshrc` — loads Omarchy's user environment setup.
@@ -89,6 +94,17 @@ hyprctl configerrors
 omarchy theme set symbiote
 )
 ```
+
+To restore the Display panel separately, run:
+
+```bash
+mkdir -p ~/.config/omarchy/plugins/zack.monitor
+cp -a ~/linux-builds/presets/omarchy/plugins/zack.monitor/. ~/.config/omarchy/plugins/zack.monitor/
+omarchy-shell shell rescanPlugins
+omarchy plugin enable zack.monitor
+```
+
+If the updated panel does not appear, run `omarchy restart shell`.
 
 After restoring, the personal shortcuts are:
 
