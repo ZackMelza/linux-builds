@@ -86,7 +86,7 @@ Panel {
     if (section === "brightness") return 0  // only the slider sentinel at -1
     if (section === "textsize") return 0    // slider sentinel at -1, like brightness
     if (section === "scale") return scaleValues.length
-    if (section === "mode") return 2
+    if (section === "mode") return 3
     if (section === "monitors") return displays.length
     return 0
   }
@@ -138,7 +138,7 @@ Panel {
     if (focusSection !== "scale" && focusSection !== "mode") return
     var next = selectedIndex + delta
     if (next < 0) next = 0
-    var count = focusSection === "mode" ? 2 : scaleValues.length
+    var count = focusSection === "mode" ? 3 : scaleValues.length
     if (next > count - 1) next = count - 1
     selectedIndex = next
   }
@@ -150,7 +150,7 @@ Panel {
   }
 
   function activateCursor() {
-    if (focusSection === "mode") { setDisplayMode(selectedIndex === 1); return }
+    if (focusSection === "mode") { setDisplayMode(selectedIndex); return }
     if (focusSection === "scale" && selectedIndex >= 0 && selectedIndex < scaleValues.length) {
       setScale(scaleValues[selectedIndex])
       return
@@ -317,9 +317,14 @@ Panel {
     if (!actionProc.running) actionProc.running = true
   }
 
-  function setDisplayMode(mirror) {
-    if (actionProc.running) return
-    actionProc.command = ["omarchy-hyprland-monitor-internal-mirror", mirror ? "on" : "off"]
+  function setDisplayMode(mode) {
+    if (actionProc.running || mode < 0 || mode > 2) return
+    var script = mode === 2
+      ? 'omarchy-hyprland-monitor-internal-mirror off && omarchy-hyprland-monitor-internal off'
+      : (mode === 1
+        ? 'omarchy-hyprland-monitor-internal on && omarchy-hyprland-monitor-internal-mirror on'
+        : 'omarchy-hyprland-monitor-internal-mirror off && omarchy-hyprland-monitor-internal on')
+    actionProc.command = ["sh", "-c", script]
     actionProc.running = true
   }
 
@@ -830,11 +835,11 @@ Panel {
               width: parent.width
               spacing: Style.spacing.xs
               Repeater {
-                model: ["Extend", "Mirror"]
+                model: ["Extend", "Mirror", "Projector only"]
                 Button {
                   required property string modelData
                   required property int index
-                  width: (parent.width - Style.spacing.xs) / 2
+                  width: (parent.width - 2 * Style.spacing.xs) / 3
                   text: modelData
                   fontSize: Style.font.caption
                   foreground: root.bar.foreground
@@ -842,9 +847,9 @@ Panel {
                   horizontalPadding: Style.spacing.sm
                   verticalPadding: Style.spacing.controlPaddingY
                   bordered: true
-                  active: index === (root.mirrorEnabled ? 1 : 0)
+                  active: index === (!root.internalEnabled ? 2 : (root.mirrorEnabled ? 1 : 0))
                   hasCursor: root.cursorActive && root.focusSection === "mode" && root.selectedIndex === index
-                  onClicked: root.setDisplayMode(index === 1)
+                  onClicked: root.setDisplayMode(index)
                   onHovered: function(isHovered) {
                     if (!isHovered || root.reflowingText) return
                     root.cursorActive = true

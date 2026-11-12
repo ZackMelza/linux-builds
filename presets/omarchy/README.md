@@ -16,9 +16,9 @@ The reusable configuration is under `presets/omarchy/hypr/`:
 - `looknfeel.lua` — personal window spacing, corners and border colors.
 
 The Display panel clone in `presets/omarchy/plugins/zack.monitor/` adds
-Extend and Mirror controls for an external display. It requires Omarchy's
-monitor mirroring command; the panel has been visually checked on the current
-installation, but its controls have not been functionally tested here.
+Extend, Mirror and Projector only controls for an external display. It uses
+Omarchy's monitor commands and the external display's preferred mode. The
+controls have not been functionally tested here.
 
 The saved personal Zsh configuration is under `shared/zsh/` and `shared/starship/`:
 
